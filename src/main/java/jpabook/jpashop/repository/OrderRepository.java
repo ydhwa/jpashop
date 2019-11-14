@@ -30,8 +30,8 @@ public class OrderRepository {
         boolean isFirstCondition = true;
 
         // 주문 상태 검색
-        if(orderSearch.getOrderStatus() != null) {
-            if(isFirstCondition) {
+        if (orderSearch.getOrderStatus() != null) {
+            if (isFirstCondition) {
                 jpql += " where";
                 isFirstCondition = false;
             } else {
@@ -41,8 +41,8 @@ public class OrderRepository {
         }
 
         // 회원 이름 검색
-        if(StringUtils.hasText(orderSearch.getMemberName())) {
-            if(isFirstCondition) {
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
+            if (isFirstCondition) {
                 jpql += " where";
                 isFirstCondition = false;
             } else {
@@ -54,10 +54,10 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(jpql, Order.class)
                 .setMaxResults(1000);
 
-        if(orderSearch.getOrderStatus() != null) {
+        if (orderSearch.getOrderStatus() != null) {
             query = query.setParameter("status", orderSearch.getOrderStatus());
         }
-        if(orderSearch.getMemberName() != null) {
+        if (orderSearch.getMemberName() != null) {
             query = query.setParameter("name", orderSearch.getMemberName());
         }
 
@@ -76,12 +76,12 @@ public class OrderRepository {
         List<Predicate> criteria = new ArrayList<>();
 
         // 주문 상태 검색
-        if(orderSearch.getOrderStatus() != null) {
+        if (orderSearch.getOrderStatus() != null) {
             Predicate status = cb.equal(o.get("status"), orderSearch.getOrderStatus());
             criteria.add(status);
         }
         // 회원 이름 검색
-        if(StringUtils.hasText(orderSearch.getMemberName())) {
+        if (StringUtils.hasText(orderSearch.getMemberName())) {
             Predicate name = cb.equal(o.get("name"), "%" + orderSearch.getMemberName() + "%");
             criteria.add(name);
         }
@@ -89,5 +89,13 @@ public class OrderRepository {
         cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
         return query.getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
     }
 }
