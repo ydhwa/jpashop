@@ -65,6 +65,7 @@ public class OrderService {
     // 검색
     // 이렇게 단순하게 조회하는 경우에는 고민해보고 컨트롤러에서 바로 repository를 호출하도록 짜도 된다. 얽매일 필요 없다는 뜻.
     public List<Order> findOrders(OrderSearch orderSearch) {
-        return orderRepository.findAllByString(orderSearch);
+//        return orderRepository.findAllByString(orderSearch);
+        return orderRepository.findAll(orderSearch);
     }
 }
